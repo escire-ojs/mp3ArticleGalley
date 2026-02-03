@@ -16,3 +16,6 @@ msgstr "Galerada de artículo en MP3"
 
 msgid "plugins.generic.mp3ArticleGalley.description"
 msgstr "Este módulo ofrece soporte para renderizar las galeradas de los artículos en MP3."
+
+msgid "plugins.generic.mp3ArticleGalley.audioNotSupported"
+msgstr "Su navegador no admite el elemento de audio."

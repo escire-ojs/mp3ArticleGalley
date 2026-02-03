@@ -16,3 +16,6 @@ msgstr "MP3 Article Galley"
 
 msgid "plugins.generic.mp3ArticleGalley.description"
 msgstr "This plugin provides rendering support for MP3 Article Galleys."
+
+msgid "plugins.generic.mp3ArticleGalley.audioNotSupported"
+msgstr "Your browser does not support the audio element."
