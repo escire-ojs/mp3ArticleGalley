@@ -44,10 +44,12 @@
 				{url page="article" op="download" path=$article->getBestId()|to_array:$galley->getBestGalleyId():$submissionFile->getId() inline=true}
 			{/capture}
 		{/if}
-		<audio controls="">
-			<source src="{$audioUrl}" type="audio/mpeg">
-			{translate key="plugins.generic.mp3ArticleGalley.audioNotSupported"}
-		</audio>
+		<div class="pkp_mp3_galley_container">
+			<audio controls="">
+				<source src="{$audioUrl}" type="audio/mpeg">
+				{translate key="plugins.generic.mp3ArticleGalley.audioNotSupported"}
+			</audio>
+		</div>
 	</div>
 
 	{call_hook name="Templates::Common::Footer::PageFooter"}
