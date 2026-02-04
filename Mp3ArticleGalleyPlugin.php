@@ -33,15 +33,13 @@ class Mp3ArticleGalleyPlugin extends GenericPlugin
             return false;
         }
         if ($this->getEnabled($mainContextId)) {
-            Hook::add('ArticleHandler::view::galley', [$this, 'articleViewCallback'], Hook::SEQUENCE_LATE);
+            Hook::add('ArticleHandler::view::galley', $this->articleViewCallback(...), Hook::SEQUENCE_LATE);
         }
         return true;
     }
 
     /**
-     * Archivo de configuración por contexto.
-     *
-     * @return string
+     * @copydoc Plugin::getContextSpecificPluginSettingsFile()
      */
     public function getContextSpecificPluginSettingsFile()
     {
@@ -49,9 +47,7 @@ class Mp3ArticleGalleyPlugin extends GenericPlugin
     }
 
     /**
-     * Nombre para mostrar del plugin.
-     *
-     * @return string
+     * @copydoc Plugin::getDisplayName()
      */
     public function getDisplayName()
     {
@@ -59,9 +55,7 @@ class Mp3ArticleGalleyPlugin extends GenericPlugin
     }
 
     /**
-     * Descripción del plugin.
-     *
-     * @return string
+     * @copydoc Plugin::getDescription()
      */
     public function getDescription()
     {
@@ -78,46 +72,42 @@ class Mp3ArticleGalleyPlugin extends GenericPlugin
      */
     public function articleViewCallback($hookName, $args)
     {
-        $request = & $args[0];
-        $issue = & $args[1];
+        $request = &$args[0];
+        $issue = &$args[1];
         /** @var \PKP\galley\Galley $galley */
-        $galley = & $args[2];
-        $article = & $args[3];
+        $galley = &$args[2];
+        $article = &$args[3];
 
-        if (!$galley) {
-            return false;
-        }
-
-        $submissionFile = $galley->getFile();
-        if (!$submissionFile || $submissionFile->getData('mimetype') !== 'audio/mpeg') {
-            return false;
-        }
-
-        $galleyPublication = null;
-        foreach ($article->getData('publications') as $publication) {
-            if ($publication->getId() === $galley->getData('publicationId')) {
-                $galleyPublication = $publication;
-                break;
+        if ($galley && in_array($galley->getFileType(), ['audio/mpeg', 'audio/mp3', 'audio/mpeg3', 'audio/x-mpeg'])) {
+            /** @var ?\APP\publication\Publication $galleyPublication */
+            $galleyPublication = null;
+            foreach ($article->getData('publications') as $publication) {
+                if ($publication->getId() === $galley->getData('publicationId')) {
+                    $galleyPublication = $publication;
+                    break;
+                }
             }
+
+            $templateMgr = TemplateManager::getManager($request);
+            $templateMgr->addStyleSheet(
+                'mp3ArticleGalley',
+                $request->getBaseUrl() . '/' . $this->getPluginPath() . '/styles/mp3Galley.css',
+                ['contexts' => ['frontend']]
+            );
+            $templateMgr->assign([
+                'issue' => $issue,
+                'article' => $article,
+                'galley' => $galley,
+                'isLatestPublication' => $article->getData('currentPublicationId') === $galley->getData('publicationId'),
+                'galleyPublication' => $galleyPublication,
+                'submissionFile' => $galley->getFile(),
+            ]);
+            $templateMgr->display($this->getTemplateResource('display.tpl'));
+
+            return true;
         }
 
-        $templateMgr = TemplateManager::getManager($request);
-        $templateMgr->addStyleSheet(
-            'mp3ArticleGalley',
-            $request->getBaseUrl() . '/' . $this->getPluginPath() . '/styles/mp3Galley.css',
-            ['contexts' => ['frontend']]
-        );
-        $templateMgr->assign([
-            'issue' => $issue,
-            'article' => $article,
-            'galley' => $galley,
-            'isLatestPublication' => $article->getData('currentPublicationId') === $galley->getData('publicationId'),
-            'galleyPublication' => $galleyPublication,
-            'submissionFile' => $submissionFile,
-        ]);
-        $templateMgr->display($this->getTemplateResource('display.tpl'));
-
-        return true;
+        return false;
     }
 }
 
