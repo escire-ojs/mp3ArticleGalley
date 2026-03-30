@@ -28,9 +28,7 @@
 			{$article->getLocalizedTitle()|escape}
 		</a>
 	</header>
-	<!--<h4>
-        {$article->getLocalizedTitle()|escape}
-        </h4>-->
+
 	<div id="htmlContainer" class="galley_view{if !$isLatestPublication} galley_view_with_notice{/if}" style="overflow:visible;-webkit-overflow-scrolling:touch">
 		{if !$isLatestPublication}
 			<div class="galley_view_notice">
@@ -46,10 +44,12 @@
 				{url page="article" op="download" path=$article->getBestId()|to_array:$galley->getBestGalleyId() inline=true}
 			{/capture}
 		{/if}
-		<audio controls="">
-			<source src="{$htmlUrl}" type="audio/mpeg">
-			Your browser does not support the audio tag.
-		</audio>
+		<div class="pkp_mp3_galley_container">
+			<audio controls="">
+				<source src="{$htmlUrl}" type="audio/mpeg">
+				Your browser does not support the audio tag.
+			</audio>
+		</div>
 	</div>
 
 	{call_hook name="Templates::Common::Footer::PageFooter"}

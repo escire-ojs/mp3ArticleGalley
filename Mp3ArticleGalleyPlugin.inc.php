@@ -92,6 +92,11 @@ class Mp3ArticleGalleyPlugin extends GenericPlugin
                 }
             }
             $templateMgr = TemplateManager::getManager($request);
+            $templateMgr->addStyleSheet(
+                'mp3ArticleGalley',
+                $request->getBaseUrl() . '/' . $this->getPluginPath() . '/styles/mp3Galley.css',
+                ['contexts' => ['frontend']]
+            );
             $templateMgr->assign([
                 'issue' => $issue,
                 'article' => $article,
@@ -99,6 +104,7 @@ class Mp3ArticleGalleyPlugin extends GenericPlugin
                 'isLatestPublication' => $article->getData('currentPublicationId') === $galley->getData('publicationId'),
                 'galleyPublication' => $galleyPublication,
             ]);
+
             $templateMgr->display($this->getTemplateResource('display.tpl'));
 
             return true;
